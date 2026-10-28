@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   WifiOff, 
   Zap, 
@@ -6,22 +6,18 @@ import {
   Database, 
   ShieldCheck, 
   Server,
-  Layers,
   ArrowRight,
-  Cpu,
-  FileCode,
-  HardDrive,
-  Network,
-  CheckCircle2,
-  Clock,
   Terminal,
   X,
   Code2,
   Copy,
   Check,
   Activity,
-  Workflow,
-  Radio
+  ChevronDown,
+  ChevronUp,
+  Cpu,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 
 export default function TechArchitecture() {
@@ -29,14 +25,30 @@ export default function TechArchitecture() {
   const [activeStepIndex, setActiveStepIndex] = useState(null);
   const [inspectingSpec, setInspectingSpec] = useState(null);
   const [copiedCode, setCopiedCode] = useState(false);
-  const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'topology'
+  const [expandedCardId, setExpandedCardId] = useState(null);
+  const [packetIndex, setPacketIndex] = useState(0);
+
+  const livePackets = [
+    { source: 'TEKLA_STREAM', text: 'Ingested 1,240 Part Marks from REV_R3.nc1 in 1.84s (0 syntax errors)', color: '#2563EB' },
+    { source: 'RS232_SERIAL', text: 'Weighbridge COM1: Inward Gross 42.15 MT locked • Essae 455 Indicator', color: '#059669' },
+    { source: 'PWA_OFFLINE', text: 'Yard Bay 07: 18 Column marks torqued & signed offline via IndexedDB', color: '#D97706' },
+    { source: 'MTC_LEDGER', text: 'Cryptographic SHA-256 seal bound: Tata Steel Heat #TH-8821 to Mark #RAF-04', color: '#7C3AED' },
+    { source: 'CNC_SPOOL', text: 'G-Code Nesting spool sent to Hypertherm Bay 02: Kerf 1.8mm, Yield 97.2%', color: '#0284C7' }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPacketIndex((prev) => (prev + 1) % livePackets.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, [livePackets.length]);
 
   const tiers = [
-    { id: 'ALL', label: 'All Architecture Modules' },
-    { id: 'INGESTION', label: '1. CAD/CAM & BIM Ingestion' },
-    { id: 'HARDWARE', label: '2. Hardware & IoT Telemetry' },
-    { id: 'EDGE', label: '3. Offline-First Yard Edge' },
-    { id: 'LEDGER', label: '4. Relational & MTC Ledger' }
+    { id: 'ALL', label: 'All Modules (6)' },
+    { id: 'INGESTION', label: 'CAD & 3D BIM Ingestion' },
+    { id: 'HARDWARE', label: 'Hardware & IoT Drivers' },
+    { id: 'EDGE', label: 'Offline Yard Terminal' },
+    { id: 'LEDGER', label: 'Relational & MTC Ledger' }
   ];
 
   const benchmarks = [
@@ -52,7 +64,7 @@ export default function TechArchitecture() {
       title: '3D BIM Ingestion', 
       meta: 'Tekla .NC1 / MBS parser', 
       tier: 'INGESTION',
-      detail: 'Node.js streaming parser extracts part marks and hole geometry in <3.2s'
+      detail: 'Node.js streaming parser deserializes geometry & part marks in <3.2s'
     },
     { 
       step: '02', 
@@ -248,6 +260,10 @@ const gateway = new EdgeLocalProxy({
     }
   };
 
+  const toggleExpandCard = (id) => {
+    setExpandedCardId(prev => prev === id ? null : id);
+  };
+
   const filteredSpecs = activeTier === 'ALL' 
     ? specs 
     : specs.filter(s => s.tier === activeTier);
@@ -256,7 +272,7 @@ const gateway = new EdgeLocalProxy({
     <section 
       id="architecture"
       style={{
-        padding: '85px 0 95px',
+        padding: '90px 0 100px',
         backgroundColor: '#FFFFFF',
         borderTop: '1px solid #E2E8F0',
         borderBottom: '1px solid #E2E8F0',
@@ -265,42 +281,42 @@ const gateway = new EdgeLocalProxy({
     >
       <div className="container">
         
-        {/* Section Heading */}
-        <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto 38px' }}>
-          <div className="badge-tech" style={{ marginBottom: '14px' }}>
-            <span>TECHNICAL SPECIFICATIONS & INDUSTRIAL PROTOCOLS</span>
+        {/* Minimalist Section Header */}
+        <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 40px' }}>
+          <div className="badge-tech badge-cyan" style={{ marginBottom: '14px' }}>
+            <Activity size={12} color="#0284C7" />
+            <span>ENTERPRISE ARCHITECTURE &bull; BUILT FOR STEEL FABRICATION</span>
           </div>
           <h2 
             className="heading-font"
             style={{
-              fontSize: 'clamp(1.8rem, 3.4vw, 2.6rem)',
+              fontSize: 'clamp(1.9rem, 3.5vw, 2.7rem)',
               fontWeight: 800,
-              letterSpacing: '-0.025em',
+              letterSpacing: '-0.03em',
               color: '#0F172A',
               marginBottom: '14px',
-              lineHeight: 1.2
+              lineHeight: 1.18
             }}
           >
-            Built for Shop-Floor Latency, Tekla Ingestion & Hardware I/O
+            Engineering Rigor Behind Every Tonnage Metric
           </h2>
-          <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.65, margin: 0 }}>
-            Modern React and Node.js microservices engineered specifically for pre-engineered steel buildings: 
-            streaming 3D BIM models, unalterable serial weighbridge links, and zero-downtime offline yard terminals.
+          <p style={{ color: '#475569', fontSize: '1.02rem', lineHeight: 1.65, margin: 0, fontWeight: 400 }}>
+            Minimal, zero-bloat architecture engineered specifically for heavy structural steel: 
+            streaming 3D Tekla models, direct RS-232 weighbridge hooks, and offline-first mobile apps.
           </p>
         </div>
 
-        {/* Industrial Benchmarks Row */}
+        {/* Minimalist Industrial Benchmarks Row */}
         <div 
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '16px',
-            marginBottom: '38px',
+            marginBottom: '36px',
             backgroundColor: '#F8FAFC',
-            padding: '24px',
+            padding: '24px 28px',
             borderRadius: '16px',
-            border: '1px solid #E2E8F0',
-            boxShadow: 'var(--shadow-card)'
+            border: '1px solid #E2E8F0'
           }}
         >
           {benchmarks.map((b, idx) => (
@@ -315,10 +331,10 @@ const gateway = new EdgeLocalProxy({
               <div 
                 className="mono" 
                 style={{ 
-                  fontSize: '1.75rem', 
+                  fontSize: '1.85rem', 
                   fontWeight: 800, 
                   color: '#2563EB', 
-                  letterSpacing: '-0.03em',
+                  letterSpacing: '-0.035em',
                   marginBottom: '4px' 
                 }}
               >
@@ -334,32 +350,78 @@ const gateway = new EdgeLocalProxy({
           ))}
         </div>
 
+        {/* Minimalist Live Edge Telemetry Bar */}
+        <div 
+          style={{
+            backgroundColor: '#0F172A',
+            borderRadius: '12px',
+            padding: '12px 20px',
+            marginBottom: '36px',
+            border: '1px solid #1E293B',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '14px',
+            flexWrap: 'wrap',
+            boxShadow: '0 4px 16px rgba(15, 23, 42, 0.08)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <span className="status-pulse" style={{ backgroundColor: '#10B981', width: '8px', height: '8px' }} />
+            <span className="mono" style={{ fontSize: '0.72rem', color: '#94A3B8', fontWeight: 700 }}>
+              LIVE EDGE TELEMETRY:
+            </span>
+            <span 
+              className="mono" 
+              style={{ 
+                fontSize: '0.72rem', 
+                backgroundColor: `${livePackets[packetIndex].color}25`, 
+                color: livePackets[packetIndex].color, 
+                padding: '2px 8px', 
+                borderRadius: '4px',
+                fontWeight: 700 
+              }}
+            >
+              [{livePackets[packetIndex].source}]
+            </span>
+            <span className="mono" style={{ fontSize: '0.76rem', color: '#F8FAFC', fontWeight: 500 }}>
+              {livePackets[packetIndex].text}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span className="mono" style={{ fontSize: '0.7rem', color: '#64748B' }}>
+              Cycle 10Hz &bull; TLS 1.3
+            </span>
+          </div>
+        </div>
+
         {/* Interactive Shop-Floor Data Lifecycle Pipeline */}
         <div 
           style={{
-            backgroundColor: '#F1F5F9',
-            border: '1px solid #CBD5E1',
+            backgroundColor: '#F8FAFC',
+            border: '1px solid #E2E8F0',
             borderRadius: '16px',
-            padding: '22px 26px',
+            padding: '22px 24px',
             marginBottom: '38px'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Terminal size={16} color="#2563EB" />
-              <span className="mono" style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0F172A', letterSpacing: '0.04em' }}>
-                SHOP-FLOOR DATA LIFECYCLE PIPELINE (INTERACTIVE)
+              <Terminal size={15} color="#2563EB" />
+              <span className="mono" style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0F172A', letterSpacing: '0.04em' }}>
+                SHOP-FLOOR DATA LIFECYCLE (ENQUIRY TO ERECTION)
               </span>
             </div>
             <span style={{ fontSize: '0.76rem', color: '#64748B', fontFamily: 'var(--font-mono)' }}>
-              Click any step to filter architecture modules
+              Click any stage to filter architecture modules
             </span>
           </div>
 
           <div 
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(185px, 1fr))',
               gap: '12px'
             }}
           >
@@ -375,8 +437,8 @@ const gateway = new EdgeLocalProxy({
                     borderRadius: '10px',
                     padding: '14px',
                     cursor: 'pointer',
-                    boxShadow: isSelected ? '0 4px 14px rgba(37, 99, 235, 0.15)' : '0 1px 3px rgba(15, 23, 42, 0.04)',
-                    transition: 'all 0.18s ease'
+                    boxShadow: isSelected ? '0 4px 14px rgba(37, 99, 235, 0.14)' : '0 1px 3px rgba(15, 23, 42, 0.04)',
+                    transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
@@ -412,206 +474,52 @@ const gateway = new EdgeLocalProxy({
           </div>
         </div>
 
-        {/* View Switcher & Tier Filter Tabs */}
+        {/* Minimalist Tier Filter Pills */}
         <div 
           style={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             flexWrap: 'wrap',
-            gap: '14px',
+            gap: '8px',
             marginBottom: '32px'
           }}
         >
-          {/* Tier Filter Pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {tiers.map(tier => (
-              <button
-                key={tier.id}
-                onClick={() => {
-                  setActiveTier(tier.id);
-                  setActiveStepIndex(null);
-                }}
-                style={{
-                  padding: '7px 15px',
-                  borderRadius: '8px',
-                  border: activeTier === tier.id ? '1.5px solid #2563EB' : '1px solid #CBD5E1',
-                  backgroundColor: activeTier === tier.id ? '#EFF6FF' : '#FFFFFF',
-                  color: activeTier === tier.id ? '#2563EB' : '#475569',
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '0.84rem',
-                  fontWeight: activeTier === tier.id ? 700 : 500,
-                  cursor: 'pointer',
-                  transition: 'all 0.16s ease'
-                }}
-              >
-                {tier.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Mode Switcher: Cards vs Topology Diagram */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {tiers.map(tier => (
             <button
-              onClick={() => setViewMode('cards')}
+              key={tier.id}
+              onClick={() => {
+                setActiveTier(tier.id);
+                setActiveStepIndex(null);
+              }}
               style={{
-                padding: '6px 14px',
-                borderRadius: '6px',
-                border: viewMode === 'cards' ? '1px solid #2563EB' : '1px solid #E2E8F0',
-                backgroundColor: viewMode === 'cards' ? '#EFF6FF' : '#FFFFFF',
-                color: viewMode === 'cards' ? '#2563EB' : '#64748B',
-                fontSize: '0.78rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 600,
-                cursor: 'pointer'
+                padding: '7px 16px',
+                borderRadius: '8px',
+                border: activeTier === tier.id ? '1.5px solid #2563EB' : '1px solid #CBD5E1',
+                backgroundColor: activeTier === tier.id ? '#EFF6FF' : '#FFFFFF',
+                color: activeTier === tier.id ? '#2563EB' : '#475569',
+                fontFamily: 'var(--font-heading)',
+                fontSize: '0.84rem',
+                fontWeight: activeTier === tier.id ? 700 : 500,
+                cursor: 'pointer',
+                transition: 'all 0.16s ease'
               }}
             >
-              Modules View
+              {tier.label}
             </button>
-            <button
-              onClick={() => setViewMode('topology')}
-              style={{
-                padding: '6px 14px',
-                borderRadius: '6px',
-                border: viewMode === 'topology' ? '1px solid #2563EB' : '1px solid #E2E8F0',
-                backgroundColor: viewMode === 'topology' ? '#EFF6FF' : '#FFFFFF',
-                color: viewMode === 'topology' ? '#2563EB' : '#64748B',
-                fontSize: '0.78rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 600,
-                cursor: 'pointer'
-              }}
-            >
-              System Topology Diagram
-            </button>
-          </div>
+          ))}
         </div>
 
-        {/* View Mode 1: Interactive System Topology Diagram */}
-        {viewMode === 'topology' ? (
-          <div 
-            style={{
-              backgroundColor: '#0F172A',
-              borderRadius: '16px',
-              padding: '36px',
-              border: '1px solid #1E293B',
-              boxShadow: '0 20px 40px -8px rgba(15, 23, 42, 0.35)',
-              color: '#FFFFFF',
-              marginBottom: '30px'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-              <div>
-                <span className="mono" style={{ fontSize: '0.76rem', color: '#38BDF8', fontWeight: 700, letterSpacing: '0.04em' }}>
-                  END-TO-END SHOP FLOOR DATA TOPOLOGY
-                </span>
-                <h3 className="heading-font" style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF', marginTop: '4px' }}>
-                  Industrial Microservice & IoT Node Architecture
-                </h3>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="status-pulse" style={{ backgroundColor: '#10B981' }} />
-                <span className="mono" style={{ fontSize: '0.74rem', color: '#10B981', fontWeight: 700 }}>
-                  ALL CLUSTERS NOMINAL
-                </span>
-              </div>
-            </div>
-
-            <div 
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '20px',
-                position: 'relative'
-              }}
-            >
-              {[
-                {
-                  node: 'INGESTION ENGINE',
-                  title: 'Tekla / MBS Parser Node',
-                  status: '< 3.2s Streaming AST',
-                  color: '#38BDF8',
-                  tags: ['.NC1', '.IFC', 'MBS', 'DXF'],
-                  role: 'Deserializes geometry & part marks without memory spikes'
-                },
-                {
-                  node: 'FACTORY CORE',
-                  title: 'Edge IoT Controller',
-                  status: '10Hz Serial RS-232',
-                  color: '#34D399',
-                  tags: ['Avery', 'Essae', 'Hypertherm', 'PLC'],
-                  role: 'Captures gross tare tonnage & spools 2D plasma G-code'
-                },
-                {
-                  node: 'YARD TERMINALS',
-                  title: 'Offline PWA Mesh',
-                  status: '100% Offline IndexedDB',
-                  color: '#FBBF24',
-                  tags: ['ServiceWorker', 'QR Zebra', 'IndexedDB'],
-                  role: 'Floor fitters record cutting & assembly with zero 4G'
-                },
-                {
-                  node: 'RELATIONAL LEDGER',
-                  title: 'PostgreSQL MTC Ledger',
-                  status: 'SHA-256 Cryptographic',
-                  color: '#A78BFA',
-                  tags: ['ACID', 'Tata MTC', 'JSW Heat', 'E-Way'],
-                  role: 'Permanent audit trail from raw coil heat to client gatepass'
-                }
-              ].map((node, nIdx) => (
-                <div 
-                  key={nIdx}
-                  style={{
-                    backgroundColor: '#1E293B',
-                    borderRadius: '12px',
-                    border: `1.5px solid ${node.color}40`,
-                    padding: '22px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)'
-                  }}
-                >
-                  <div className="mono" style={{ fontSize: '0.68rem', color: node.color, fontWeight: 800, letterSpacing: '0.04em', marginBottom: '6px' }}>
-                    {node.node}
-                  </div>
-                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
-                    {node.title}
-                  </h4>
-                  <div className="mono" style={{ fontSize: '0.74rem', color: '#94A3B8', marginBottom: '14px', backgroundColor: '#0F172A', padding: '4px 8px', borderRadius: '4px', display: 'inline-block' }}>
-                    {node.status}
-                  </div>
-                  <p style={{ color: '#CBD5E1', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                    {node.role}
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                    {node.tags.map((t, ti) => (
-                      <span key={ti} className="mono" style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#334155', color: '#F1F5F9' }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ marginTop: '24px', textAlign: 'center' }}>
-              <button 
-                onClick={() => setViewMode('cards')}
-                className="btn btn-primary"
-                style={{ fontSize: '0.84rem', padding: '9px 22px' }}
-              >
-                Inspect Individual Microservice Modules & Code &rarr;
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* View Mode 2: Detailed Technical Architecture Cards Grid */
-          <div 
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '22px'
-            }}
-          >
-            {filteredSpecs.map((spec) => (
+        {/* Detailed Technical Architecture Cards Grid */}
+        <div 
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '22px'
+          }}
+        >
+          {filteredSpecs.map((spec) => {
+            const isExpanded = expandedCardId === spec.id;
+            return (
               <div 
                 key={spec.id}
                 className="card"
@@ -626,10 +534,10 @@ const gateway = new EdgeLocalProxy({
                   justifyContent: 'space-between',
                   position: 'relative',
                   overflow: 'hidden',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease'
+                  transition: 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease'
                 }}
               >
-                {/* Top 3px Accent Line */}
+                {/* Top 3px Colored Accent Border Bar */}
                 <div 
                   style={{
                     position: 'absolute',
@@ -723,12 +631,38 @@ const gateway = new EdgeLocalProxy({
                   </div>
 
                   {/* Description */}
-                  <p style={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '20px' }}>
+                  <p style={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '16px' }}>
                     {spec.desc}
                   </p>
+
+                  {/* Inline Quick Spec Drawer (Toggleable) */}
+                  {isExpanded && (
+                    <div 
+                      style={{
+                        backgroundColor: '#F8FAFC',
+                        borderRadius: '8px',
+                        border: '1px solid #CBD5E1',
+                        padding: '12px 14px',
+                        marginBottom: '16px',
+                        fontSize: '0.78rem'
+                      }}
+                    >
+                      <div className="mono" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>
+                        HARDWARE PARAMETERS:
+                      </div>
+                      {Object.entries(spec.techSpecs).slice(0, 2).map(([k, v], i) => (
+                        <div key={i} style={{ marginBottom: '4px', display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ color: '#64748B' }}>{k.replace(/([A-Z])/g, ' $1')}:</span>
+                          <span className="mono" style={{ color: '#0F172A', fontWeight: 600 }}>
+                            {Array.isArray(v) ? v.join(', ') : v}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Action: Inspect Specs */}
+                {/* Actions Bar */}
                 <div style={{ paddingTop: '16px', borderTop: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <button
                     onClick={() => setInspectingSpec(spec)}
@@ -750,14 +684,30 @@ const gateway = new EdgeLocalProxy({
                     <ArrowRight size={14} />
                   </button>
 
-                  <span className="mono" style={{ fontSize: '0.7rem', color: '#94A3B8' }}>
-                    Production Tested
-                  </span>
+                  <button
+                    onClick={() => toggleExpandCard(spec.id)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      backgroundColor: '#F8FAFC',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '6px',
+                      color: '#475569',
+                      fontSize: '0.74rem',
+                      fontFamily: 'var(--font-mono)',
+                      padding: '4px 8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <span>{isExpanded ? 'Hide Specs' : 'Quick Specs'}</span>
+                    {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
 
       </div>
 
