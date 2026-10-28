@@ -6,6 +6,7 @@ import {
   X, 
   ChevronRight
 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Navbar({ onOpenConsultation }) {
   const [scrolled, setScrolled] = useState(false);
@@ -58,59 +59,11 @@ export default function Navbar({ onOpenConsultation }) {
           style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '12px', 
             textDecoration: 'none', 
             color: 'inherit' 
           }}
         >
-          <div 
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)'
-            }}
-          >
-            <Layers size={20} color="#FFFFFF" strokeWidth={2.2} />
-          </div>
-
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span 
-                className="heading-font" 
-                style={{ 
-                  fontWeight: 800, 
-                  fontSize: '1.25rem', 
-                  letterSpacing: '-0.02em',
-                  color: '#0F172A' 
-                }}
-              >
-                KESHAV <span style={{ color: '#2563EB' }}>INFO</span>
-              </span>
-              <span 
-                className="mono"
-                style={{
-                  fontSize: '0.62rem',
-                  padding: '2px 6px',
-                  borderRadius: '3px',
-                  background: '#FEF3C7',
-                  color: '#B45309',
-                  border: '1px solid #FDE68A',
-                  fontWeight: 700,
-                  letterSpacing: '0.04em'
-                }}
-              >
-                PEB SYSTEMS
-              </span>
-            </div>
-            <p style={{ fontSize: '0.68rem', color: '#64748B', margin: 0, fontWeight: 500 }}>
-              Heavy Fabrication ERP & Industrial Software
-            </p>
-          </div>
+          <BrandLogo size={38} showText={true} subtitle="PEB SYSTEMS" />
         </Link>
 
         {/* Desktop Navigation Links */}

@@ -5,6 +5,7 @@ import {
   Send, 
   ShieldCheck
 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function ConsultationModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -110,13 +111,16 @@ export default function ConsultationModal({ isOpen, onClose }) {
             zIndex: 10
           }}
         >
-          <div>
-            <div className="mono" style={{ fontSize: '0.68rem', color: '#2563EB', fontWeight: 700, marginBottom: '2px' }}>
-              DIRECT INDUSTRIAL ENGAGEMENT
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <BrandLogo size={32} />
+            <div>
+              <div className="mono" style={{ fontSize: '0.68rem', color: '#2563EB', fontWeight: 700, marginBottom: '2px' }}>
+                DIRECT INDUSTRIAL ENGAGEMENT
+              </div>
+              <h3 className="heading-font" style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                Plant Technical Assessment
+              </h3>
             </div>
-            <h3 className="heading-font" style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
-              Plant Technical Assessment
-            </h3>
           </div>
 
           <button

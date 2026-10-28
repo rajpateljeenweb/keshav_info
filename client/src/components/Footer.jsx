@@ -6,6 +6,7 @@ import {
   Phone, 
   MapPin
 } from 'lucide-react';
+import BrandLogo from './BrandLogo';
 
 export default function Footer({ onOpenConsultation }) {
   return (
@@ -29,24 +30,8 @@ export default function Footer({ onOpenConsultation }) {
         >
           {/* Brand Info */}
           <div style={{ maxWidth: '320px' }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', textDecoration: 'none' }}>
-              <div 
-                style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '7px',
-                  background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  boxShadow: '0 3px 10px rgba(37, 99, 235, 0.3)'
-                }}
-              >
-                <Layers size={18} color="#FFFFFF" />
-              </div>
-              <span className="heading-font" style={{ fontWeight: 800, fontSize: '1.2rem', color: '#0F172A' }}>
-                KESHAV <span style={{ color: '#2563EB' }}>INFO</span>
-              </span>
+            <Link to="/" style={{ display: 'inline-flex', marginBottom: '14px', textDecoration: 'none' }}>
+              <BrandLogo size={34} showText={true} subtitle="PEB SYSTEMS" />
             </Link>
 
             <p style={{ fontSize: '0.86rem', lineHeight: 1.6, color: '#475569', marginBottom: '16px' }}>
