@@ -16,15 +16,23 @@ import {
   Clock,
   Terminal,
   X,
-  Code2
+  Code2,
+  Copy,
+  Check,
+  Activity,
+  Workflow,
+  Radio
 } from 'lucide-react';
 
 export default function TechArchitecture() {
   const [activeTier, setActiveTier] = useState('ALL');
+  const [activeStepIndex, setActiveStepIndex] = useState(null);
   const [inspectingSpec, setInspectingSpec] = useState(null);
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'topology'
 
   const tiers = [
-    { id: 'ALL', label: 'Complete Architecture' },
+    { id: 'ALL', label: 'All Architecture Modules' },
     { id: 'INGESTION', label: '1. CAD/CAM & BIM Ingestion' },
     { id: 'HARDWARE', label: '2. Hardware & IoT Telemetry' },
     { id: 'EDGE', label: '3. Offline-First Yard Edge' },
@@ -36,6 +44,44 @@ export default function TechArchitecture() {
     { value: '0.00 ms', label: 'Weighbridge Serial Lag', detail: 'Direct RS-232 & TCP hardware capture' },
     { value: '100%', label: 'Offline Yard Coverage', detail: 'IndexedDB BOQs with zero 4G reliance' },
     { value: 'SHA-256', label: 'Heat Number Audit', detail: 'Cryptographic mill certificate tracing' }
+  ];
+
+  const pipelineSteps = [
+    { 
+      step: '01', 
+      title: '3D BIM Ingestion', 
+      meta: 'Tekla .NC1 / MBS parser', 
+      tier: 'INGESTION',
+      detail: 'Node.js streaming parser extracts part marks and hole geometry in <3.2s'
+    },
+    { 
+      step: '02', 
+      title: 'Heat Allocation', 
+      meta: 'MTC yield & chemistry', 
+      tier: 'LEDGER',
+      detail: 'Cryptographic SHA-256 binding between coil heat number and cut-pieces'
+    },
+    { 
+      step: '03', 
+      title: 'CNC Nesting Push', 
+      meta: 'G-Code & cutting plan', 
+      tier: 'INGESTION',
+      detail: 'Kerf-optimized nest files spooled directly to plasma & saw controllers'
+    },
+    { 
+      step: '04', 
+      title: 'Weighbridge Link', 
+      meta: 'Avery RS-232 gross/tare', 
+      tier: 'HARDWARE',
+      detail: 'Zero human tampering gross/tare capture from serial indicators'
+    },
+    { 
+      step: '05', 
+      title: 'Dispatch Gatepass', 
+      meta: 'Cryptographic invoice', 
+      tier: 'LEDGER',
+      detail: 'Automated GST E-Way bills and erection trailer manifests'
+    }
   ];
 
   const specs = [
@@ -186,6 +232,22 @@ const gateway = new EdgeLocalProxy({
     }
   ];
 
+  const handleCopyCode = (code) => {
+    navigator.clipboard.writeText(code);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2200);
+  };
+
+  const handlePipelineStepClick = (index, tier) => {
+    if (activeStepIndex === index) {
+      setActiveStepIndex(null);
+      setActiveTier('ALL');
+    } else {
+      setActiveStepIndex(index);
+      setActiveTier(tier);
+    }
+  };
+
   const filteredSpecs = activeTier === 'ALL' 
     ? specs 
     : specs.filter(s => s.tier === activeTier);
@@ -194,7 +256,7 @@ const gateway = new EdgeLocalProxy({
     <section 
       id="architecture"
       style={{
-        padding: '90px 0',
+        padding: '85px 0 95px',
         backgroundColor: '#FFFFFF',
         borderTop: '1px solid #E2E8F0',
         borderBottom: '1px solid #E2E8F0',
@@ -204,7 +266,7 @@ const gateway = new EdgeLocalProxy({
       <div className="container">
         
         {/* Section Heading */}
-        <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto 40px' }}>
+        <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto 38px' }}>
           <div className="badge-tech" style={{ marginBottom: '14px' }}>
             <span>TECHNICAL SPECIFICATIONS & INDUSTRIAL PROTOCOLS</span>
           </div>
@@ -233,7 +295,7 @@ const gateway = new EdgeLocalProxy({
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '16px',
-            marginBottom: '42px',
+            marginBottom: '38px',
             backgroundColor: '#F8FAFC',
             padding: '24px',
             borderRadius: '16px',
@@ -272,238 +334,430 @@ const gateway = new EdgeLocalProxy({
           ))}
         </div>
 
-        {/* Pipeline Visual Flow */}
+        {/* Interactive Shop-Floor Data Lifecycle Pipeline */}
         <div 
           style={{
             backgroundColor: '#F1F5F9',
             border: '1px solid #CBD5E1',
-            borderRadius: '14px',
-            padding: '20px 24px',
-            marginBottom: '40px'
+            borderRadius: '16px',
+            padding: '22px 26px',
+            marginBottom: '38px'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Terminal size={16} color="#2563EB" />
-              <span className="mono" style={{ fontSize: '0.78rem', fontWeight: 700, color: '#0F172A', letterSpacing: '0.04em' }}>
-                SHOP-FLOOR DATA LIFECYCLE PIPELINE
+              <span className="mono" style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0F172A', letterSpacing: '0.04em' }}>
+                SHOP-FLOOR DATA LIFECYCLE PIPELINE (INTERACTIVE)
               </span>
             </div>
             <span style={{ fontSize: '0.76rem', color: '#64748B', fontFamily: 'var(--font-mono)' }}>
-              Deterministic • Zero Data Loss • Strict Audit
+              Click any step to filter architecture modules
             </span>
           </div>
 
           <div 
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '12px',
-              alignItems: 'center'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+              gap: '12px'
             }}
           >
-            {[
-              { step: '01', title: '3D BIM Ingestion', meta: 'Tekla .NC1 / MBS parser' },
-              { step: '02', title: 'Heat Allocation', meta: 'MTC yield & chemistry' },
-              { step: '03', title: 'CNC Nesting Push', meta: 'G-Code & cutting plan' },
-              { step: '04', title: 'Weighbridge Link', meta: 'Avery RS-232 gross/tare' },
-              { step: '05', title: 'Dispatch Gatepass', meta: 'Cryptographic invoice' }
-            ].map((p, i) => (
-              <div 
-                key={i}
+            {pipelineSteps.map((p, i) => {
+              const isSelected = activeStepIndex === i;
+              return (
+                <div 
+                  key={i}
+                  onClick={() => handlePipelineStepClick(i, p.tier)}
+                  style={{
+                    backgroundColor: isSelected ? '#EFF6FF' : '#FFFFFF',
+                    border: isSelected ? '1.5px solid #2563EB' : '1px solid #CBD5E1',
+                    borderRadius: '10px',
+                    padding: '14px',
+                    cursor: 'pointer',
+                    boxShadow: isSelected ? '0 4px 14px rgba(37, 99, 235, 0.15)' : '0 1px 3px rgba(15, 23, 42, 0.04)',
+                    transition: 'all 0.18s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span 
+                        className="mono" 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          fontWeight: 800, 
+                          color: isSelected ? '#FFFFFF' : '#2563EB', 
+                          backgroundColor: isSelected ? '#2563EB' : '#EFF6FF', 
+                          padding: '2px 6px', 
+                          borderRadius: '4px' 
+                        }}
+                      >
+                        {p.step}
+                      </span>
+                      <span style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0F172A' }}>
+                        {p.title}
+                      </span>
+                    </div>
+                    {isSelected && <span className="status-pulse" style={{ backgroundColor: '#2563EB', width: '6px', height: '6px' }} />}
+                  </div>
+                  <div style={{ fontSize: '0.76rem', color: '#64748B', marginBottom: '4px' }}>
+                    {p.meta}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: isSelected ? '#2563EB' : '#94A3B8', lineHeight: 1.35 }}>
+                    {p.detail}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* View Switcher & Tier Filter Tabs */}
+        <div 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px',
+            marginBottom: '32px'
+          }}
+        >
+          {/* Tier Filter Pills */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {tiers.map(tier => (
+              <button
+                key={tier.id}
+                onClick={() => {
+                  setActiveTier(tier.id);
+                  setActiveStepIndex(null);
+                }}
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #CBD5E1',
-                  borderRadius: '10px',
-                  padding: '12px 14px',
-                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)'
+                  padding: '7px 15px',
+                  borderRadius: '8px',
+                  border: activeTier === tier.id ? '1.5px solid #2563EB' : '1px solid #CBD5E1',
+                  backgroundColor: activeTier === tier.id ? '#EFF6FF' : '#FFFFFF',
+                  color: activeTier === tier.id ? '#2563EB' : '#475569',
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '0.84rem',
+                  fontWeight: activeTier === tier.id ? 700 : 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.16s ease'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <span className="mono" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#2563EB', backgroundColor: '#EFF6FF', padding: '1px 6px', borderRadius: '4px' }}>
-                    {p.step}
-                  </span>
-                  <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0F172A' }}>
-                    {p.title}
-                  </span>
+                {tier.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Mode Switcher: Cards vs Topology Diagram */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button
+              onClick={() => setViewMode('cards')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: viewMode === 'cards' ? '1px solid #2563EB' : '1px solid #E2E8F0',
+                backgroundColor: viewMode === 'cards' ? '#EFF6FF' : '#FFFFFF',
+                color: viewMode === 'cards' ? '#2563EB' : '#64748B',
+                fontSize: '0.78rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              Modules View
+            </button>
+            <button
+              onClick={() => setViewMode('topology')}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: viewMode === 'topology' ? '1px solid #2563EB' : '1px solid #E2E8F0',
+                backgroundColor: viewMode === 'topology' ? '#EFF6FF' : '#FFFFFF',
+                color: viewMode === 'topology' ? '#2563EB' : '#64748B',
+                fontSize: '0.78rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              System Topology Diagram
+            </button>
+          </div>
+        </div>
+
+        {/* View Mode 1: Interactive System Topology Diagram */}
+        {viewMode === 'topology' ? (
+          <div 
+            style={{
+              backgroundColor: '#0F172A',
+              borderRadius: '16px',
+              padding: '36px',
+              border: '1px solid #1E293B',
+              boxShadow: '0 20px 40px -8px rgba(15, 23, 42, 0.35)',
+              color: '#FFFFFF',
+              marginBottom: '30px'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+              <div>
+                <span className="mono" style={{ fontSize: '0.76rem', color: '#38BDF8', fontWeight: 700, letterSpacing: '0.04em' }}>
+                  END-TO-END SHOP FLOOR DATA TOPOLOGY
+                </span>
+                <h3 className="heading-font" style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF', marginTop: '4px' }}>
+                  Industrial Microservice & IoT Node Architecture
+                </h3>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="status-pulse" style={{ backgroundColor: '#10B981' }} />
+                <span className="mono" style={{ fontSize: '0.74rem', color: '#10B981', fontWeight: 700 }}>
+                  ALL CLUSTERS NOMINAL
+                </span>
+              </div>
+            </div>
+
+            <div 
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: '20px',
+                position: 'relative'
+              }}
+            >
+              {[
+                {
+                  node: 'INGESTION ENGINE',
+                  title: 'Tekla / MBS Parser Node',
+                  status: '< 3.2s Streaming AST',
+                  color: '#38BDF8',
+                  tags: ['.NC1', '.IFC', 'MBS', 'DXF'],
+                  role: 'Deserializes geometry & part marks without memory spikes'
+                },
+                {
+                  node: 'FACTORY CORE',
+                  title: 'Edge IoT Controller',
+                  status: '10Hz Serial RS-232',
+                  color: '#34D399',
+                  tags: ['Avery', 'Essae', 'Hypertherm', 'PLC'],
+                  role: 'Captures gross tare tonnage & spools 2D plasma G-code'
+                },
+                {
+                  node: 'YARD TERMINALS',
+                  title: 'Offline PWA Mesh',
+                  status: '100% Offline IndexedDB',
+                  color: '#FBBF24',
+                  tags: ['ServiceWorker', 'QR Zebra', 'IndexedDB'],
+                  role: 'Floor fitters record cutting & assembly with zero 4G'
+                },
+                {
+                  node: 'RELATIONAL LEDGER',
+                  title: 'PostgreSQL MTC Ledger',
+                  status: 'SHA-256 Cryptographic',
+                  color: '#A78BFA',
+                  tags: ['ACID', 'Tata MTC', 'JSW Heat', 'E-Way'],
+                  role: 'Permanent audit trail from raw coil heat to client gatepass'
+                }
+              ].map((node, nIdx) => (
+                <div 
+                  key={nIdx}
+                  style={{
+                    backgroundColor: '#1E293B',
+                    borderRadius: '12px',
+                    border: `1.5px solid ${node.color}40`,
+                    padding: '22px',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)'
+                  }}
+                >
+                  <div className="mono" style={{ fontSize: '0.68rem', color: node.color, fontWeight: 800, letterSpacing: '0.04em', marginBottom: '6px' }}>
+                    {node.node}
+                  </div>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
+                    {node.title}
+                  </h4>
+                  <div className="mono" style={{ fontSize: '0.74rem', color: '#94A3B8', marginBottom: '14px', backgroundColor: '#0F172A', padding: '4px 8px', borderRadius: '4px', display: 'inline-block' }}>
+                    {node.status}
+                  </div>
+                  <p style={{ color: '#CBD5E1', fontSize: '0.82rem', lineHeight: 1.5, marginBottom: '14px' }}>
+                    {node.role}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                    {node.tags.map((t, ti) => (
+                      <span key={ti} className="mono" style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#334155', color: '#F1F5F9' }}>
+                        {t}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.74rem', color: '#64748B' }}>
-                  {p.meta}
+              ))}
+            </div>
+
+            <div style={{ marginTop: '24px', textAlign: 'center' }}>
+              <button 
+                onClick={() => setViewMode('cards')}
+                className="btn btn-primary"
+                style={{ fontSize: '0.84rem', padding: '9px 22px' }}
+              >
+                Inspect Individual Microservice Modules & Code &rarr;
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* View Mode 2: Detailed Technical Architecture Cards Grid */
+          <div 
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '22px'
+            }}
+          >
+            {filteredSpecs.map((spec) => (
+              <div 
+                key={spec.id}
+                className="card"
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '14px',
+                  padding: '26px',
+                  boxShadow: 'var(--shadow-card)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease'
+                }}
+              >
+                {/* Top 3px Accent Line */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    backgroundColor: spec.accentColor
+                  }}
+                />
+
+                <div>
+                  {/* Header with Icon & Badges */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div 
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '10px',
+                        backgroundColor: `${spec.accentColor}12`,
+                        border: `1px solid ${spec.accentColor}30`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {spec.icon}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      <span 
+                        className="mono" 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          padding: '3px 8px', 
+                          borderRadius: '6px', 
+                          backgroundColor: '#F1F5F9', 
+                          color: '#475569', 
+                          fontWeight: 600,
+                          border: '1px solid #E2E8F0'
+                        }}
+                      >
+                        {spec.tierLabel}
+                      </span>
+                      <span 
+                        className="mono" 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          padding: '3px 8px', 
+                          borderRadius: '6px', 
+                          backgroundColor: `${spec.accentColor}10`, 
+                          color: spec.accentColor, 
+                          fontWeight: 700,
+                          border: `1px solid ${spec.accentColor}25`
+                        }}
+                      >
+                        {spec.metric}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h3 
+                    className="heading-font" 
+                    style={{ 
+                      fontSize: '1.14rem', 
+                      fontWeight: 700, 
+                      color: '#0F172A', 
+                      marginBottom: '8px',
+                      lineHeight: 1.35
+                    }}
+                  >
+                    {spec.title}
+                  </h3>
+
+                  {/* Protocol Pill */}
+                  <div 
+                    className="mono"
+                    style={{ 
+                      fontSize: '0.74rem', 
+                      color: '#2563EB', 
+                      marginBottom: '12px',
+                      backgroundColor: '#EFF6FF',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      display: 'inline-block',
+                      fontWeight: 600
+                    }}
+                  >
+                    {spec.protocol}
+                  </div>
+
+                  {/* Description */}
+                  <p style={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '20px' }}>
+                    {spec.desc}
+                  </p>
+                </div>
+
+                {/* Action: Inspect Specs */}
+                <div style={{ paddingTop: '16px', borderTop: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <button
+                    onClick={() => setInspectingSpec(spec)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: '#2563EB',
+                      fontSize: '0.84rem',
+                      fontWeight: 700,
+                      fontFamily: 'var(--font-heading)',
+                      cursor: 'pointer',
+                      padding: 0
+                    }}
+                  >
+                    <span>Inspect Parameters & Code</span>
+                    <ArrowRight size={14} />
+                  </button>
+
+                  <span className="mono" style={{ fontSize: '0.7rem', color: '#94A3B8' }}>
+                    Production Tested
+                  </span>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Tier Filter Tabs */}
-        <div 
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '8px',
-            marginBottom: '32px'
-          }}
-        >
-          {tiers.map(tier => (
-            <button
-              key={tier.id}
-              onClick={() => setActiveTier(tier.id)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: activeTier === tier.id ? '1px solid #2563EB' : '1px solid #CBD5E1',
-                backgroundColor: activeTier === tier.id ? '#EFF6FF' : '#FFFFFF',
-                color: activeTier === tier.id ? '#2563EB' : '#475569',
-                fontFamily: 'var(--font-heading)',
-                fontSize: '0.84rem',
-                fontWeight: activeTier === tier.id ? 700 : 500,
-                cursor: 'pointer',
-                transition: 'all 0.16s ease'
-              }}
-            >
-              {tier.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Technical Architecture Cards Grid */}
-        <div 
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '22px'
-          }}
-        >
-          {filteredSpecs.map((spec) => (
-            <div 
-              key={spec.id}
-              className="card"
-              style={{
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E2E8F0',
-                borderRadius: '14px',
-                padding: '26px',
-                boxShadow: 'var(--shadow-card)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease'
-              }}
-            >
-              <div>
-                {/* Header with Icon & Badges */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                  <div 
-                    style={{
-                      width: '42px',
-                      height: '42px',
-                      borderRadius: '10px',
-                      backgroundColor: `${spec.accentColor}12`,
-                      border: `1px solid ${spec.accentColor}30`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {spec.icon}
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                    <span 
-                      className="mono" 
-                      style={{ 
-                        fontSize: '0.72rem', 
-                        padding: '3px 8px', 
-                        borderRadius: '6px', 
-                        backgroundColor: '#F1F5F9', 
-                        color: '#475569', 
-                        fontWeight: 600,
-                        border: '1px solid #E2E8F0'
-                      }}
-                    >
-                      {spec.tierLabel}
-                    </span>
-                    <span 
-                      className="mono" 
-                      style={{ 
-                        fontSize: '0.72rem', 
-                        padding: '3px 8px', 
-                        borderRadius: '6px', 
-                        backgroundColor: `${spec.accentColor}10`, 
-                        color: spec.accentColor, 
-                        fontWeight: 700,
-                        border: `1px solid ${spec.accentColor}25`
-                      }}
-                    >
-                      {spec.metric}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Title */}
-                <h3 
-                  className="heading-font" 
-                  style={{ 
-                    fontSize: '1.14rem', 
-                    fontWeight: 700, 
-                    color: '#0F172A', 
-                    marginBottom: '8px',
-                    lineHeight: 1.35
-                  }}
-                >
-                  {spec.title}
-                </h3>
-
-                {/* Protocol Pill */}
-                <div 
-                  className="mono"
-                  style={{ 
-                    fontSize: '0.74rem', 
-                    color: '#2563EB', 
-                    marginBottom: '12px',
-                    backgroundColor: '#EFF6FF',
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    display: 'inline-block',
-                    fontWeight: 600
-                  }}
-                >
-                  {spec.protocol}
-                </div>
-
-                {/* Description */}
-                <p style={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '20px' }}>
-                  {spec.desc}
-                </p>
-              </div>
-
-              {/* Action: Inspect Specs */}
-              <div style={{ paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}>
-                <button
-                  onClick={() => setInspectingSpec(spec)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    color: '#2563EB',
-                    fontSize: '0.84rem',
-                    fontWeight: 700,
-                    fontFamily: 'var(--font-heading)',
-                    cursor: 'pointer',
-                    padding: 0,
-                    transition: 'gap 0.15s ease'
-                  }}
-                >
-                  <span>Inspect Technical Architecture & Code</span>
-                  <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        )}
 
       </div>
 
@@ -623,13 +877,36 @@ const gateway = new EdgeLocalProxy({
                 </div>
               </div>
 
-              {/* Real Code Snippet */}
+              {/* Real Code Snippet with Copy Button */}
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                  <Code2 size={15} color="#2563EB" />
-                  <span className="mono" style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0F172A', letterSpacing: '0.04em' }}>
-                    PRODUCTION IMPLEMENTATION CODE
-                  </span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Code2 size={15} color="#2563EB" />
+                    <span className="mono" style={{ fontSize: '0.76rem', fontWeight: 800, color: '#0F172A', letterSpacing: '0.04em' }}>
+                      PRODUCTION IMPLEMENTATION CODE
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleCopyCode(inspectingSpec.codeSnippet)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      backgroundColor: copiedCode ? '#ECFDF5' : '#F1F5F9',
+                      border: copiedCode ? '1px solid #10B981' : '1px solid #CBD5E1',
+                      color: copiedCode ? '#059669' : '#475569',
+                      fontSize: '0.74rem',
+                      fontFamily: 'var(--font-mono)',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {copiedCode ? <Check size={13} color="#059669" /> : <Copy size={13} />}
+                    <span>{copiedCode ? 'Copied' : 'Copy Code'}</span>
+                  </button>
                 </div>
                 <pre 
                   style={{
