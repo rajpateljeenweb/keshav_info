@@ -1,0 +1,14 @@
+{
+  "name": "keshav-info-platform",
+  "version": "1.0.0",
+  "description": "Keshav Info - Enterprise Software Engineering for PEB & Heavy Steel Infrastructure",
+  "type": "module",
+  "scripts": {
+    "dev": "node start.js",
+    "dev:server": "node server/index.js",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "build:client": "npm run build --prefix client",
+    "start": "node server/index.js"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "keshav-info-server",
+  "version": "1.0.0",
+  "description": "Keshav Info Enterprise ERP & Industrial Software API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}

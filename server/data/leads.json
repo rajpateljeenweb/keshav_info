@@ -1,0 +1,29 @@
+[
+  {
+    "id": "LEAD-1793170006430",
+    "companyName": "Precision Steel Corp",
+    "contactPerson": "Amit Shah",
+    "phone": "+91 98250 99999",
+    "email": "amit@precisionsteel.com",
+    "industryCategory": "Pre-Engineered Buildings (PEB)",
+    "monthlyTonnage": "Under 500 MT",
+    "message": "",
+    "selectedModules": [],
+    "createdAt": "2026-10-28T06:46:46.430Z"
+  },
+  {
+    "id": "LEAD-1793167136792",
+    "companyName": "Apex Infra Structurals",
+    "contactPerson": "Rajesh Patel",
+    "phone": "+91 98250 11223",
+    "email": "rajesh@apexinfra.com",
+    "industryCategory": "Pre-Engineered Buildings (PEB)",
+    "monthlyTonnage": "800 - 1,500 MT/month",
+    "message": "Need Tekla revision delta-diffing and coil scrap tracking for our 3-bay heavy fabrication yard.",
+    "selectedModules": [
+      "SteelCore PEB ERP",
+      "Tekla Revision Sync"
+    ],
+    "createdAt": "2026-10-28T05:58:56.792Z"
+  }
+]
