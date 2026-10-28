@@ -2,25 +2,14 @@ import React, { useRef, useState } from 'react';
 import { 
   CheckCircle2, 
   Workflow, 
-  ChevronLeft, 
-  ChevronRight, 
-  Pause, 
-  Play,
-  Terminal,
-  X,
-  ExternalLink,
-  Cpu,
-  Layers,
-  Scale,
-  Compass,
-  FileCode,
-  SlidersHorizontal,
-  Flame,
-  Radio
+  Terminal, 
+  X, 
+  Layers, 
+  Scale, 
+  Compass
 } from 'lucide-react';
 
 export default function IntegrationsEcosystem() {
-  const [isPaused, setIsPaused] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [activeModalItem, setActiveModalItem] = useState(null);
 
@@ -241,83 +230,37 @@ export default function IntegrationsEcosystem() {
           </p>
         </div>
 
-        {/* Filter Bar & Controls Header */}
+        {/* Category Filter Pills */}
         <div 
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '28px',
+            justifyContent: 'center',
+            marginBottom: '32px',
             flexWrap: 'wrap',
-            gap: '14px'
+            gap: '8px'
           }}
         >
-          {/* Category Filter Pills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {categories.map(cat => (
-              <button
-                key={cat.key}
-                onClick={() => setSelectedCategory(cat.key)}
-                style={{
-                  padding: '7px 14px',
-                  borderRadius: '8px',
-                  border: selectedCategory === cat.key ? '1px solid #2563EB' : '1px solid #CBD5E1',
-                  backgroundColor: selectedCategory === cat.key ? '#EFF6FF' : '#FFFFFF',
-                  color: selectedCategory === cat.key ? '#2563EB' : '#475569',
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '0.82rem',
-                  fontWeight: selectedCategory === cat.key ? 700 : 500,
-                  cursor: 'pointer',
-                  transition: 'all 0.16s ease'
-                }}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Marquee Play/Pause & Live Telemetry Dot */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span 
-                className="status-pulse" 
-                style={{ backgroundColor: isPaused ? '#D97706' : '#059669' }} 
-              />
-              <span 
-                className="mono" 
-                style={{ 
-                  fontSize: '0.74rem', 
-                  color: isPaused ? '#B45309' : '#047857', 
-                  fontWeight: 700,
-                  letterSpacing: '0.04em'
-                }}
-              >
-                {isPaused ? 'PAUSED' : 'AUTO-SCROLLING &bull; HOVER TO PAUSE'}
-              </span>
-            </div>
-
+          {categories.map(cat => (
             <button
-              onClick={() => setIsPaused(!isPaused)}
+              key={cat.key}
+              onClick={() => setSelectedCategory(cat.key)}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '6px 12px',
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #CBD5E1',
-                borderRadius: '6px',
-                color: '#334155',
-                fontSize: '0.76rem',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 600,
+                padding: '7px 15px',
+                borderRadius: '8px',
+                border: selectedCategory === cat.key ? '1px solid #2563EB' : '1px solid #CBD5E1',
+                backgroundColor: selectedCategory === cat.key ? '#EFF6FF' : '#FFFFFF',
+                color: selectedCategory === cat.key ? '#2563EB' : '#475569',
+                fontFamily: 'var(--font-heading)',
+                fontSize: '0.82rem',
+                fontWeight: selectedCategory === cat.key ? 700 : 500,
                 cursor: 'pointer',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.16s ease'
               }}
             >
-              {isPaused ? <Play size={12} fill="#334155" /> : <Pause size={12} fill="#334155" />}
-              <span>{isPaused ? 'Resume' : 'Pause'}</span>
+              {cat.label}
             </button>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -346,13 +289,11 @@ export default function IntegrationsEcosystem() {
         <div 
           className="ecosystem-marquee-mask"
           style={{ width: '100%', position: 'relative' }}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
         >
           {/* Track 1: CAD & Detailing (Scrolls Left) */}
           <div style={{ marginBottom: '20px' }}>
             <div
-              className={`ecosystem-track-left ${isPaused ? 'track-paused' : ''}`}
+              className="ecosystem-track-left"
               style={{
                 display: 'flex',
                 gap: '20px',
@@ -374,7 +315,7 @@ export default function IntegrationsEcosystem() {
           {/* Track 2: Machinery, Weighbridges, CNC & Finance (Scrolls Right) */}
           <div>
             <div
-              className={`ecosystem-track-right ${isPaused ? 'track-paused' : ''}`}
+              className="ecosystem-track-right"
               style={{
                 display: 'flex',
                 gap: '20px',
@@ -607,12 +548,6 @@ export default function IntegrationsEcosystem() {
           animation: marquee-scroll-right 44s linear infinite;
           will-change: transform;
         }
-
-        .ecosystem-track-left.track-paused,
-        .ecosystem-track-right.track-paused {
-          animation-play-state: paused !important;
-        }
-
         .ecosystem-marquee-mask {
           mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
           -webkit-mask-image: linear-gradient(to right, transparent 0%, black 3%, black 97%, transparent 100%);
